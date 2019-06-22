@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web:
+    image: "node:10.16.0-stretch"
+    environment:
+      - PORT=3000
+    volumes:
+      - .:/opt/blog
+    ports:
+      - "3000:3000"
+    working_dir: /opt/blog
+    command: [ "npm", "start" ]

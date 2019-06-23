@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  db:
+    image: "mongo:4.0.10-xenial"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=mydevelopmentsecret
+      - MONGO_INITDB_DATABASE=blog
+    volumes:
+      - data:/data/db
+      - configdb:/data/configdb
+      - ./migrations/init.js:/docker-entrypoint-initdb.d/init.js:ro
+
   web:
     image: "node:10.16.0-stretch"
     environment:
@@ -11,3 +22,7 @@ services:
       - "3000:3000"
     working_dir: /opt/blog
     command: [ "npm", "start" ]
+
+volumes:
+  data:
+  configdb:

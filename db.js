@@ -1,4 +1,6 @@
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
+
 const dbURI = process.env.DB_URI || ''
 
 const getConnection = async () => {
@@ -11,6 +13,16 @@ const getConnection = async () => {
     }
 }
 
+const getObjectId = (str) => {
+    try {
+        return new ObjectID(str)
+    } catch (err) {
+        // TODO improve
+        return null
+    }
+}
+
 module.exports = {
-    getConnection: getConnection
+    getConnection: getConnection,
+    getObjectId: getObjectId
 }

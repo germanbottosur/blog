@@ -18,6 +18,7 @@ const getArticle = async (req, res, next) => {
     try {
         // TODO sanitize
         const id = req.params.id
+        
         const article = await model.getArticle(id)
 
         if (article != null) {
@@ -34,6 +35,7 @@ const addArticle = async (req, res, next) => {
     try {
         // TODO sanitize and validate authors
         const data = req.body
+        
         const articleId = await model.addArticle(data)
         
         res.links({
@@ -45,14 +47,34 @@ const addArticle = async (req, res, next) => {
     }
 }
 
+const updateArticle = async (req, res, next) => {
+    try {
+        // TODO sanitize
+        const id = req.params.id
+        // TODO sanitize and validate authors
+        const data = req.body
+
+        const updated = await model.updateArticle(id, data)
+        
+        if (updated) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(404)
+        }
+    } catch (err) {
+        return next(err)
+    }
+}
+
 const deleteArticle = async (req, res, next) => {
     try {
         // TODO sanitize
         const id = req.params.id
+        
         const deleted = await model.deleteArticle(id)
 
         if (deleted) {
-            res.sendStatus(200)
+            res.sendStatus(204)
         } else {
             res.sendStatus(404)
         }
@@ -67,10 +89,8 @@ router.post('/', addArticle)
 
 router.get('/:id', getArticle)
 
+router.patch('/:id', updateArticle)
+
 router.delete('/:id', deleteArticle)
-
-// TODO
-
-router.patch('/:id', (req, res) => res.sendStatus(503))
 
 module.exports = router

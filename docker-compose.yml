@@ -16,6 +16,7 @@ services:
     image: "node:10.16.0-stretch"
     environment:
       - PORT=3000
+      - DB_URI=mongodb://root:mydevelopmentsecret@db:27017/
     volumes:
       - .:/opt/blog
     ports:

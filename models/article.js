@@ -54,16 +54,45 @@ const getArticle = async (id) => {
 
 const addArticle = async (data) => {
     const now = utcNow()
-    data["created_at"] = now
-    data["updated_at"] = now
-    data["deleted_at"] = null
+    const articleData = {
+        title: data.title,
+        short_description: data.short_description,
+        long_description: data.long_description,
+        authors: data.authors,
+        created_at: now,
+        updated_at: now,
+        deleted_at: null
+    }
     
     const connection = await db.getConnection()
     try {
         const collection = connection.db('blog').collection('articles')
         
-        const result = await collection.insertOne(data)
-        return result.insertedId
+        const insert = await collection.insertOne(articleData)
+        return insert.insertedId
+    } finally {
+        connection.close()
+    }
+}
+
+const updateArticle = async (id, data) => {
+    const now = utcNow()
+    const articleData = {
+        title: data.title,
+        short_description: data.short_description,
+        long_description: data.long_description,
+        authors: data.authors,
+        updated_at: now
+    }
+
+    const connection = await db.getConnection()
+    try {
+        const collection = connection.db('blog').collection('articles')
+        const objectID = db.getObjectId(id)
+
+        const update = await collection.updateOne({_id: objectID, deleted_at: null}, {$set: articleData})
+
+        return (update.result.nModified > 0)
     } finally {
         connection.close()
     }
@@ -93,5 +122,6 @@ module.exports = {
     getArticles: getArticles,
     getArticle: getArticle,
     addArticle: addArticle,
+    updateArticle: updateArticle,
     deleteArticle: deleteArticle
 }

@@ -14,12 +14,39 @@ const getArticles = async () => {
                 title: doc.title,
                 short_description: doc.short_description,
                 long_description: doc.long_description,
+                authors: doc.authors,
                 created_at: doc.created_at,
                 updated_at: doc.updated_at
             })
         })
 
         return articles
+    } finally {
+        connection.close()
+    }
+}
+
+const getArticle = async (id) => {
+    const connection = await db.getConnection()
+
+    try {
+        const collection = connection.db('blog').collection('articles')
+        const objectID = db.getObjectId(id)
+        const doc = await collection.findOne({_id: objectID, deleted_at: null})
+
+        if (doc != null) {
+            return {
+                id: doc._id,
+                title: doc.title,
+                short_description: doc.short_description,
+                long_description: doc.long_description,
+                authors: doc.authors,
+                created_at: doc.created_at,
+                updated_at: doc.updated_at
+            }
+        } else {
+            return doc
+        }
     } finally {
         connection.close()
     }
@@ -42,6 +69,21 @@ const addArticle = async (data) => {
     }
 }
 
+const deleteArticle = async (id) => {
+    const connection = await db.getConnection()
+    try {
+        const collection = connection.db('blog').collection('articles')
+        const objectID = db.getObjectId(id)
+        const now = utcNow()
+
+        const update = await collection.updateOne({_id: objectID, deleted_at: null}, {$set: {deleted_at: now}})
+
+        return (update.result.nModified > 0)
+    } finally {
+        connection.close()
+    }
+}
+
 const utcNow = () => {
     const utcNow = new Date().toUTCString()
     return new Date(utcNow)
@@ -49,5 +91,7 @@ const utcNow = () => {
 
 module.exports = {
     getArticles: getArticles,
-    addArticle: addArticle
+    getArticle: getArticle,
+    addArticle: addArticle,
+    deleteArticle: deleteArticle
 }

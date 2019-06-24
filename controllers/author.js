@@ -5,7 +5,7 @@ const router = express.Router()
 
 const getAuthors = async (req, res, next) => {
     try {
-        authors = await model.getAuthors()
+        const authors = await model.getAuthors()
         res.json(authors)
     } catch (err) {
         return next(err)

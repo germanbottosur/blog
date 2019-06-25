@@ -3,6 +3,7 @@ const ObjectID = require('mongodb').ObjectID
 
 const dbURI = process.env.DB_URI || ''
 
+// TODO use a pool?
 const getConnection = async () => {
     const client = new MongoClient(dbURI, {useNewUrlParser: true})
     try {

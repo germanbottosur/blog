@@ -5,6 +5,7 @@ const getArticles = async () => {
 
     try {
         const collection = connection.db('blog').collection('articles')
+        // TODO add projection
         const cursor = collection.find({deleted_at: null})
 
         const articles = []
@@ -12,10 +13,6 @@ const getArticles = async () => {
             articles.push({
                 id: doc._id,
                 title: doc.title,
-                short_description: doc.short_description,
-                long_description: doc.long_description,
-                authors: doc.authors,
-                created_at: doc.created_at,
                 updated_at: doc.updated_at
             })
         })
@@ -53,7 +50,7 @@ const getArticle = async (id) => {
 }
 
 const addArticle = async (data) => {
-    const now = utcNow()
+    const now = new Date()
     const articleData = {
         title: data.title,
         short_description: data.short_description,
@@ -76,7 +73,7 @@ const addArticle = async (data) => {
 }
 
 const updateArticle = async (id, data) => {
-    const now = utcNow()
+    const now = new Date()
     const articleData = {
         title: data.title,
         short_description: data.short_description,
@@ -103,7 +100,7 @@ const deleteArticle = async (id) => {
     try {
         const collection = connection.db('blog').collection('articles')
         const objectID = db.getObjectId(id)
-        const now = utcNow()
+        const now = new Date()
 
         const update = await collection.updateOne({_id: objectID, deleted_at: null}, {$set: {deleted_at: now}})
 
@@ -111,11 +108,6 @@ const deleteArticle = async (id) => {
     } finally {
         connection.close()
     }
-}
-
-const utcNow = () => {
-    const utcNow = new Date().toUTCString()
-    return new Date(utcNow)
 }
 
 module.exports = {

@@ -4,6 +4,7 @@ const model = require('../models/author')
 const router = express.Router()
 
 const getAuthors = async (req, res, next) => {
+    // TODO add pagination
     try {
         const authors = await model.getAuthors()
         res.json(authors)

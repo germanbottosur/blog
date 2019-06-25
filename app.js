@@ -9,6 +9,8 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+// TODO authentication?
+
 app.use('/', indexController)
 app.use('/authors/', authorController)
 app.use('/articles/', articleController)

@@ -1,51 +1,43 @@
 const db = require("../db");
 
 const getArticles = async () => {
-  const connection = await db.getConnection();
+  const cursor = db
+    .client()
+    .collection("articles")
+    .find({ deleted_at: null });
 
-  try {
-    const collection = connection.db("blog").collection("articles");
-    // TODO add projection
-    const cursor = collection.find({ deleted_at: null });
-
-    const articles = [];
-    await cursor.forEach(doc => {
-      articles.push({
-        id: doc._id,
-        title: doc.title,
-        updated_at: doc.updated_at
-      });
+  const articles = [];
+  await cursor.forEach(doc => {
+    articles.push({
+      id: doc._id,
+      title: doc.title,
+      updated_at: doc.updated_at
     });
+  });
 
-    return articles;
-  } finally {
-    connection.close();
-  }
+  return articles;
 };
 
 const getArticle = async id => {
-  const connection = await db.getConnection();
+  const objectID = db.getObjectId(id);
 
-  try {
-    const collection = connection.db("blog").collection("articles");
-    const objectID = db.getObjectId(id);
-    const doc = await collection.findOne({ _id: objectID, deleted_at: null });
+  const doc = await db
+    .client()
+    .collection("articles")
+    .findOne({ _id: objectID, deleted_at: null });
 
-    if (doc != null) {
-      return {
-        id: doc._id,
-        title: doc.title,
-        short_description: doc.short_description,
-        long_description: doc.long_description,
-        authors: doc.authors,
-        created_at: doc.created_at,
-        updated_at: doc.updated_at
-      };
-    } else {
-      return doc;
-    }
-  } finally {
-    connection.close();
+  if (doc != null) {
+    return {
+      id: doc._id,
+      title: doc.title,
+      short_description: doc.short_description,
+      long_description: doc.long_description,
+      authors: doc.authors,
+      created_at: doc.created_at,
+      updated_at: doc.updated_at
+    };
+  } else {
+    return doc;
   }
 };
 
@@ -61,15 +53,12 @@ const addArticle = async data => {
     deleted_at: null
   };
 
-  const connection = await db.getConnection();
-  try {
-    const collection = connection.db("blog").collection("articles");
+  const insert = await db
+    .client()
+    .collection("articles")
+    .insertOne(articleData);
 
-    const insert = await collection.insertOne(articleData);
-    return insert.insertedId;
-  } finally {
-    connection.close();
-  }
+  return insert.insertedId;
 };
 
 const updateArticle = async (id, data) => {
@@ -82,38 +71,28 @@ const updateArticle = async (id, data) => {
     updated_at: now
   };
 
-  const connection = await db.getConnection();
-  try {
-    const collection = connection.db("blog").collection("articles");
-    const objectID = db.getObjectId(id);
+  const objectID = db.getObjectId(id);
+  const update = await db
+    .client()
+    .collection("articles")
+    .updateOne({ _id: objectID, deleted_at: null }, { $set: articleData });
 
-    const update = await collection.updateOne(
-      { _id: objectID, deleted_at: null },
-      { $set: articleData }
-    );
-
-    return update.result.nModified > 0;
-  } finally {
-    connection.close();
-  }
+  return update.result.nModified > 0;
 };
 
 const deleteArticle = async id => {
-  const connection = await db.getConnection();
-  try {
-    const collection = connection.db("blog").collection("articles");
-    const objectID = db.getObjectId(id);
-    const now = new Date();
+  const objectID = db.getObjectId(id);
+  const now = new Date();
 
-    const update = await collection.updateOne(
+  const update = await db
+    .client()
+    .collection("articles")
+    .updateOne(
       { _id: objectID, deleted_at: null },
       { $set: { deleted_at: now } }
     );
 
-    return update.result.nModified > 0;
-  } finally {
-    connection.close();
-  }
+  return update.result.nModified > 0;
 };
 
 module.exports = {

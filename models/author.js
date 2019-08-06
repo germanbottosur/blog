@@ -1,26 +1,20 @@
 const db = require("../db");
 
 const getAuthors = async () => {
-  const connection = await db.getConnection();
+  const cursor = db
+    .client()
+    .collection("authors")
+    .find();
 
-  try {
-    const cursor = connection
-      .db("blog")
-      .collection("authors")
-      .find();
-
-    const authors = [];
-    await cursor.forEach(doc => {
-      authors.push({
-        id: doc._id,
-        name: doc.name
-      });
+  const authors = [];
+  await cursor.forEach(doc => {
+    authors.push({
+      id: doc._id,
+      name: doc.name
     });
+  });
 
-    return authors;
-  } finally {
-    connection.close();
-  }
+  return authors;
 };
 
 module.exports = {

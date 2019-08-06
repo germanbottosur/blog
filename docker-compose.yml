@@ -11,6 +11,7 @@ services:
       - data:/data/db
       - configdb:/data/configdb
       - ./migrations/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    restart: unless-stopped
 
   web:
     image: "node:10.16.0-stretch"
@@ -18,13 +19,16 @@ services:
       - db
     environment:
       - PORT=3000
-      - DB_URI=mongodb://root:mydevelopmentsecret@db:27017/
+      - DB_SERVER_URI=mongodb://root:mydevelopmentsecret@db:27017/
+      - DB_POOL_SIZE=20
+      - DB_NAME=blog
     volumes:
       - .:/opt/blog
     ports:
       - "3000:3000"
+    restart: unless-stopped
     working_dir: /opt/blog
-    command: [ "npm", "start" ]
+    command: "./bin/server.js"
 
 volumes:
   data:

@@ -16,12 +16,18 @@ app.use("/authors/", authorController);
 app.use("/articles/", articleController);
 
 app.use(function(err, req, res, next) {
-  // TODO improve logs
-  console.error(err);
-
   res.status(500);
   res.type("text/plain");
   res.send("Ups, something is not working");
+
+  // TODO improve logs
+  console.error(err);
+
+  // FIXME: Mongo unrecoverable errors.
+  // If the mongo driver has exhausted all its reconnections attempts,
+  // it will enter in an unrecoverable state.
+  // It is required some way to handle this situation and
+  // gracefully restart the http server.
 });
 
 module.exports = app;

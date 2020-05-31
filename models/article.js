@@ -4,19 +4,19 @@ const getArticles = async () => {
   const cursor = db
     .client()
     .collection("articles")
-    .find({ deleted_at: null }, {title: 1, updated_at: 1})
-    .map(doc => {
+    .find({ deleted_at: null }, { title: 1, updated_at: 1 })
+    .map((doc) => {
       return {
         id: doc._id,
         title: doc.title,
-        updated_at: doc.updated_at
+        updated_at: doc.updated_at,
       };
     });
 
   return cursor.toArray();
 };
 
-const getArticle = async id => {
+const getArticle = async (id) => {
   const articleId = db.objectId(id);
 
   const doc = await db
@@ -32,14 +32,14 @@ const getArticle = async id => {
       long_description: doc.long_description,
       authors: doc.authors,
       created_at: doc.created_at,
-      updated_at: doc.updated_at
+      updated_at: doc.updated_at,
     };
   } else {
     return doc;
   }
 };
 
-const addArticle = async data => {
+const addArticle = async (data) => {
   const now = new Date();
   const articleData = {
     title: data.title,
@@ -48,7 +48,7 @@ const addArticle = async data => {
     authors: data.authors,
     created_at: now,
     updated_at: now,
-    deleted_at: null
+    deleted_at: null,
   };
 
   const insert = await db
@@ -67,7 +67,7 @@ const updateArticle = async (id, data) => {
     short_description: data.short_description,
     long_description: data.long_description,
     authors: data.authors,
-    updated_at: now
+    updated_at: now,
   };
 
   const update = await db
@@ -78,7 +78,7 @@ const updateArticle = async (id, data) => {
   return update.result.nModified > 0;
 };
 
-const deleteArticle = async id => {
+const deleteArticle = async (id) => {
   const articleId = db.objectId(id);
   const now = new Date();
 
@@ -98,5 +98,5 @@ module.exports = {
   getArticle: getArticle,
   addArticle: addArticle,
   updateArticle: updateArticle,
-  deleteArticle: deleteArticle
+  deleteArticle: deleteArticle,
 };

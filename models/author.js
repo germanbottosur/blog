@@ -5,10 +5,10 @@ const getAuthors = async () => {
     .client()
     .collection("authors")
     .find()
-    .map(doc => {
+    .map((doc) => {
       return {
         id: doc._id,
-        name: doc.name
+        name: doc.name,
       };
     });
 
@@ -16,5 +16,5 @@ const getAuthors = async () => {
 };
 
 module.exports = {
-  getAuthors: getAuthors
+  getAuthors: getAuthors,
 };

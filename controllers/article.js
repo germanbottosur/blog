@@ -45,7 +45,7 @@ const addArticle = async (req, res, next) => {
     const articleId = await model.addArticle(data);
 
     res.links({
-      article: `${articleId}`
+      article: `${articleId}`,
     });
     res.sendStatus(201);
   } catch (err) {

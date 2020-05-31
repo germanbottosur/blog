@@ -15,7 +15,7 @@ app.use("/", indexController);
 app.use("/authors/", authorController);
 app.use("/articles/", articleController);
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(500);
   res.type("text/plain");
   res.send("Ups, something is not working");

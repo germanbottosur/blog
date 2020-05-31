@@ -4,7 +4,7 @@ var router = express.Router();
 router.get("/", (req, res) => {
   res.links({
     articles: "articles/",
-    authors: "authors/"
+    authors: "authors/",
   });
 
   res.sendStatus(204);

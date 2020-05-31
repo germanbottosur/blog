@@ -37,7 +37,7 @@ const close = async () => {
   return;
 };
 
-const objectId = str => {
+const objectId = (str) => {
   try {
     return ObjectID(str);
   } catch (err) {
@@ -49,5 +49,5 @@ module.exports = {
   connect: connect,
   client: client,
   close: close,
-  objectId: objectId
+  objectId: objectId,
 };

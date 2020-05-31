@@ -2,9 +2,11 @@
   "name": "blog",
   "version": "1.0.0",
   "description": "",
+  "repository": "github:germanbottosur/blog",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/server.js",
+    "predev": "npm install",
+    "dev": "./bin/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {

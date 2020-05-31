@@ -2,18 +2,13 @@
 Simple blog
 
 ## Requirements
-- npm 6.9.0
 - docker 18.09.6
 - docker-compose 1.24.0
 
 ## Installation
 blog development server is configured to run with docker-compose.
 
-In order to install the development server first change the working direcotry to the directory where you have clone this repo and then install npm depencencies by running:
-```
-blog$ npm install
-```
-Once the installation of the npm dependencies is completed, start the development server just running:
+In order to start the development server just run:
 ```
 blog$ docker-compose up
 ```

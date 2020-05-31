@@ -24,12 +24,14 @@ services:
       - DB_NAME=blog
     volumes:
       - .:/opt/blog
+      - node-modules:/opt/blog/node_modules
     ports:
       - "3000:3000"
     restart: unless-stopped
     working_dir: /opt/blog
-    command: "./bin/server.js"
+    command: npm run dev
 
 volumes:
   data:
   configdb:
+  node-modules:

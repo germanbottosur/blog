@@ -4,27 +4,25 @@ const getArticles = async () => {
   const cursor = db
     .client()
     .collection("articles")
-    .find({ deleted_at: null });
-
-  const articles = [];
-  await cursor.forEach(doc => {
-    articles.push({
-      id: doc._id,
-      title: doc.title,
-      updated_at: doc.updated_at
+    .find({ deleted_at: null }, {title: 1, updated_at: 1})
+    .map(doc => {
+      return {
+        id: doc._id,
+        title: doc.title,
+        updated_at: doc.updated_at
+      };
     });
-  });
 
-  return articles;
+  return cursor.toArray();
 };
 
 const getArticle = async id => {
-  const objectID = db.getObjectId(id);
+  const articleId = db.objectId(id);
 
   const doc = await db
     .client()
     .collection("articles")
-    .findOne({ _id: objectID, deleted_at: null });
+    .findOne({ _id: articleId, deleted_at: null });
 
   if (doc != null) {
     return {
@@ -62,6 +60,7 @@ const addArticle = async data => {
 };
 
 const updateArticle = async (id, data) => {
+  const articleId = db.objectId(id);
   const now = new Date();
   const articleData = {
     title: data.title,
@@ -71,24 +70,23 @@ const updateArticle = async (id, data) => {
     updated_at: now
   };
 
-  const objectID = db.getObjectId(id);
   const update = await db
     .client()
     .collection("articles")
-    .updateOne({ _id: objectID, deleted_at: null }, { $set: articleData });
+    .updateOne({ _id: articleId, deleted_at: null }, { $set: articleData });
 
   return update.result.nModified > 0;
 };
 
 const deleteArticle = async id => {
-  const objectID = db.getObjectId(id);
+  const articleId = db.objectId(id);
   const now = new Date();
 
   const update = await db
     .client()
     .collection("articles")
     .updateOne(
-      { _id: objectID, deleted_at: null },
+      { _id: articleId, deleted_at: null },
       { $set: { deleted_at: now } }
     );
 

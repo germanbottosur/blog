@@ -37,13 +37,11 @@ const close = async () => {
   return;
 };
 
-// TODO rename
-const getObjectId = str => {
+const objectId = str => {
   try {
-    return new ObjectID(str);
+    return ObjectID(str);
   } catch (err) {
-    // TODO improve
-    return null;
+    throw new Error(`Invalid ID ${str}`);
   }
 };
 
@@ -51,5 +49,5 @@ module.exports = {
   connect: connect,
   client: client,
   close: close,
-  getObjectId: getObjectId
+  objectId: objectId
 };

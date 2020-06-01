@@ -27,7 +27,13 @@ const getArticle = async (req, res, next) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    return next(err);
+    // TODO improve invalid id handling
+    if (err.message.startsWith("Invalid ID")) {
+      console.warn(err);
+      res.sendStatus(404);
+    } else {
+      return next(err);
+    }
   }
 };
 
@@ -39,7 +45,7 @@ const addArticle = async (req, res, next) => {
     const articleId = await model.addArticle(data);
 
     res.links({
-      article: `${articleId}/`
+      article: `${articleId}`,
     });
     res.sendStatus(201);
   } catch (err) {
@@ -62,7 +68,13 @@ const updateArticle = async (req, res, next) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    return next(err);
+    // TODO improve invalid id handling
+    if (err.message.startsWith("Invalid ID")) {
+      console.warn(err);
+      res.sendStatus(404);
+    } else {
+      return next(err);
+    }
   }
 };
 
@@ -79,7 +91,13 @@ const deleteArticle = async (req, res, next) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    return next(err);
+    // TODO improve invalid id handling
+    if (err.message.startsWith("Invalid ID")) {
+      console.warn(err);
+      res.sendStatus(404);
+    } else {
+      return next(err);
+    }
   }
 };
 

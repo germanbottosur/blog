@@ -3,5 +3,5 @@ db.authors.insertMany([
   { name: "Julio" },
   { name: "Antoine" },
   { name: "Stephen" },
-  { name: "Franz" }
+  { name: "Franz" },
 ]);

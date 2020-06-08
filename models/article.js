@@ -1,24 +1,19 @@
 const db = require("../db");
 
 const getArticles = async () => {
-  const cursor = db
+  return db
     .client()
     .collection("articles")
     .find({ deleted_at: null }, { title: 1, updated_at: 1 })
-    .map((doc) => {
-      return {
-        id: doc._id,
-        title: doc.title,
-        updated_at: doc.updated_at,
-      };
-    });
-
-  return cursor.toArray();
+    .map((doc) => ({
+      id: doc._id,
+      title: doc.title,
+      updated_at: doc.updated_at,
+    }))
+    .toArray();
 };
 
-const getArticle = async (id) => {
-  const articleId = db.objectId(id);
-
+const getArticle = async (articleId) => {
   const doc = await db
     .client()
     .collection("articles")
@@ -35,7 +30,7 @@ const getArticle = async (id) => {
       updated_at: doc.updated_at,
     };
   } else {
-    return doc;
+    return null;
   }
 };
 
@@ -59,9 +54,9 @@ const addArticle = async (data) => {
   return insert.insertedId;
 };
 
-const updateArticle = async (id, data) => {
-  const articleId = db.objectId(id);
+const updateArticle = async (articleId, data) => {
   const now = new Date();
+  // TODO allow single attribute updates
   const articleData = {
     title: data.title,
     short_description: data.short_description,
@@ -78,8 +73,7 @@ const updateArticle = async (id, data) => {
   return update.result.nModified > 0;
 };
 
-const deleteArticle = async (id) => {
-  const articleId = db.objectId(id);
+const deleteArticle = async (articleId) => {
   const now = new Date();
 
   const update = await db

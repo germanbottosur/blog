@@ -1,18 +1,15 @@
 const db = require("../db");
 
 const getAuthors = async () => {
-  const cursor = db
+  return db
     .client()
     .collection("authors")
     .find()
-    .map((doc) => {
-      return {
-        id: doc._id,
-        name: doc.name,
-      };
-    });
-
-  return cursor.toArray();
+    .map((doc) => ({
+      id: doc._id,
+      name: doc.name,
+    }))
+    .toArray();
 };
 
 module.exports = {

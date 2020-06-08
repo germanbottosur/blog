@@ -37,17 +37,11 @@ const close = async () => {
   return;
 };
 
-const objectId = (str) => {
-  try {
-    return ObjectID(str);
-  } catch (err) {
-    throw new Error(`Invalid ID ${str}`);
-  }
-};
+const idFromHex = (str) => ObjectID.createFromHexString(str);
 
 module.exports = {
   connect: connect,
   client: client,
   close: close,
-  objectId: objectId,
+  idFromHex: idFromHex,
 };

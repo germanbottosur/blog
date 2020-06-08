@@ -3,8 +3,9 @@ var router = express.Router();
 
 router.get("/", (req, res) => {
   res.links({
-    articles: "articles/",
-    authors: "authors/",
+    // TODO automate base paths
+    articles: "/articles",
+    authors: "/authors",
   });
 
   res.sendStatus(204);

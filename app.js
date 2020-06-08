@@ -9,7 +9,9 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// TODO authentication?
+// TODO authentication
+// TODO review mongo ids serialization
+// TODO may the public use of mongo ids expose sensitive information about the underlying architecture ??
 
 app.use("/", indexController);
 app.use("/authors/", authorController);

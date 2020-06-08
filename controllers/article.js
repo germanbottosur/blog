@@ -1,114 +1,69 @@
 const express = require("express");
+const { sanitizeResourceId } = require("../middlewares/resource-id-sanitizer");
+const { tryRequest } = require("../middlewares/request-validator");
 const model = require("../models/article");
-
 const router = express.Router();
 
-const getArticles = async (req, res, next) => {
-  // TODO add filters
-  // TODO add pagination
-  try {
+router.get(
+  "/",
+  tryRequest(async (req, res) => {
+    // TODO add filters
+    // TODO add pagination
     const articles = await model.getArticles();
-    res.json(articles);
-  } catch (err) {
-    return next(err);
-  }
-};
+    return res.json(articles);
+  })
+);
 
-const getArticle = async (req, res, next) => {
-  try {
-    // TODO sanitize
-    const id = req.params.id;
+router.post(
+  "/",
+  tryRequest(async (req, res) => {
+    // TODO sanitize and validate authors
+    const data = req.body;
+    const articleId = await model.addArticle(data);
+    res.links({
+      // TODO automate base paths
+      article: `/articles/${articleId}`,
+    });
 
-    const article = await model.getArticle(id);
+    return res.sendStatus(201);
+  })
+);
+
+router.get(
+  "/:id",
+  sanitizeResourceId(),
+  tryRequest(async (req, res) => {
+    const article = await model.getArticle(req.params.id);
 
     if (article != null) {
-      res.json(article);
+      return res.json(article);
     } else {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
-  } catch (err) {
-    // TODO improve invalid id handling
-    if (err.message.startsWith("Invalid ID")) {
-      console.warn(err);
-      res.sendStatus(404);
-    } else {
-      return next(err);
-    }
-  }
-};
+  })
+);
 
-const addArticle = async (req, res, next) => {
-  try {
-    // TODO sanitize and validate authors
-    const data = req.body;
+router.patch(
+  "/:id",
+  sanitizeResourceId(),
+  tryRequest(async (req, res) => {
+    // TODO sanitize body and validate authors
+    const updated = await model.updateArticle(req.params.id, req.body);
+    const status = updated ? 204 : 404;
 
-    const articleId = await model.addArticle(data);
+    return res.sendStatus(status);
+  })
+);
 
-    res.links({
-      article: `${articleId}`,
-    });
-    res.sendStatus(201);
-  } catch (err) {
-    return next(err);
-  }
-};
+router.delete(
+  "/:id",
+  sanitizeResourceId(),
+  tryRequest(async (req, res) => {
+    const deleted = await model.deleteArticle(req.params.id);
+    const status = deleted ? 204 : 404;
 
-const updateArticle = async (req, res, next) => {
-  try {
-    // TODO sanitize
-    const id = req.params.id;
-    // TODO sanitize and validate authors
-    const data = req.body;
-
-    const updated = await model.updateArticle(id, data);
-
-    if (updated) {
-      res.sendStatus(204);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    // TODO improve invalid id handling
-    if (err.message.startsWith("Invalid ID")) {
-      console.warn(err);
-      res.sendStatus(404);
-    } else {
-      return next(err);
-    }
-  }
-};
-
-const deleteArticle = async (req, res, next) => {
-  try {
-    // TODO sanitize
-    const id = req.params.id;
-
-    const deleted = await model.deleteArticle(id);
-
-    if (deleted) {
-      res.sendStatus(204);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    // TODO improve invalid id handling
-    if (err.message.startsWith("Invalid ID")) {
-      console.warn(err);
-      res.sendStatus(404);
-    } else {
-      return next(err);
-    }
-  }
-};
-
-router.get("/", getArticles);
-
-router.post("/", addArticle);
-
-router.get("/:id", getArticle);
-
-router.patch("/:id", updateArticle);
-
-router.delete("/:id", deleteArticle);
+    return res.sendStatus(status);
+  })
+);
 
 module.exports = router;

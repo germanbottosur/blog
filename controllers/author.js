@@ -1,18 +1,16 @@
 const express = require("express");
+const { tryRequest } = require("../middlewares/request-validator");
 const model = require("../models/author");
 
 const router = express.Router();
 
-const getAuthors = async (req, res, next) => {
-  // TODO add pagination
-  try {
+router.get(
+  "/",
+  tryRequest(async (req, res) => {
+    // TODO add pagination
     const authors = await model.getAuthors();
-    res.json(authors);
-  } catch (err) {
-    return next(err);
-  }
-};
-
-router.get("/", getAuthors);
+    return res.json(authors);
+  })
+);
 
 module.exports = router;

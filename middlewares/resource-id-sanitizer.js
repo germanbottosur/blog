@@ -1,16 +1,15 @@
-const { param } = require("express-validator");
+var _ = require("lodash/core");
+const validator = require("validator");
 const db = require("../db");
 
-// TODO add custom messages
-// TODO Enough validations for hex string?
-const sanitizeResourceId = () =>
-  param("id")
-    .isLength({ min: 24, max: 24 })
-    .bail()
-    .isHexadecimal()
-    .bail()
-    .customSanitizer((value, context) => db.idFromHex(value));
+const isResourceId = (value) =>
+  _.isString(value) &&
+  validator.isLength(value, { min: 24, max: 24 }) &&
+  validator.isHexadecimal(value);
+
+const sanitizeResourceId = (value) => db.idFromHex(value);
 
 module.exports = {
+  isResourceId: isResourceId,
   sanitizeResourceId: sanitizeResourceId,
 };

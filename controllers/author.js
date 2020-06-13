@@ -7,6 +7,7 @@ const router = express.Router();
 router.get(
   "/",
   tryRequest(async (req, res) => {
+    // TODO add filters
     // TODO add pagination
     const authors = await model.getAuthors();
     return res.json(authors);

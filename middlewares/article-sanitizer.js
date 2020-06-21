@@ -1,9 +1,9 @@
 const { body } = require("express-validator");
-const { isNotEmptyString } = require("./sanitizer");
-const { isResourceId, sanitizeResourceId } = require("./resource-id-sanitizer");
-
-const areResourceIds = (value) => value.every(isResourceId);
-const sanitizeResourceIds = (value) => value.map(sanitizeResourceId);
+const {
+  isNotEmptyString,
+  isResourceIdString,
+  parseResourceId,
+} = require("./sanitizer-utils");
 
 // TODO validate that all authors exist in db
 const sanitizeNewArticle = () => [
@@ -13,9 +13,9 @@ const sanitizeNewArticle = () => [
   body("authors")
     .isArray({ min: 1 })
     .bail()
-    .custom(areResourceIds)
+    .custom((array) => array.every(isResourceIdString))
     .bail()
-    .customSanitizer(sanitizeResourceIds),
+    .customSanitizer((array) => array.map(parseResourceId)),
 ];
 
 module.exports = {

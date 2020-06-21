@@ -1,3 +1,6 @@
+// TODO case insensitive index
+db.authors.createIndex({ name: 1 });
+
 db.authors.insertMany([
   { name: "Jorge" },
   { name: "Julio" },
@@ -5,3 +8,6 @@ db.authors.insertMany([
   { name: "Stephen" },
   { name: "Franz" },
 ]);
+
+// TODO case insensitive index
+db.articles.createIndex({ title: 1 });

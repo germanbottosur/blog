@@ -39,9 +39,15 @@ const close = async () => {
 
 const idFromHex = (str) => ObjectID.createFromHexString(str);
 
+const parsePageLimits = ({ page, size }) => ({
+  skip: page * size,
+  limit: size,
+});
+
 module.exports = {
   connect: connect,
   client: client,
   close: close,
   idFromHex: idFromHex,
+  parsePageLimits: parsePageLimits,
 };

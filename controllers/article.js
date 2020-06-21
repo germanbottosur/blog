@@ -1,22 +1,22 @@
 const express = require("express");
-const { param } = require("express-validator");
 const {
-  isResourceId,
+  sanitizePageParams,
+  getPageParams,
   sanitizeResourceId,
-} = require("../middlewares/resource-id-sanitizer");
+  tryRequest,
+} = require("../middlewares/rest-sanitizer");
 const { sanitizeNewArticle } = require("../middlewares/article-sanitizer");
-const { tryRequest } = require("../middlewares/request-validator");
 const model = require("../models/article");
-
 
 const router = express.Router();
 
 router.get(
   "/",
+  sanitizePageParams(),
   tryRequest(async (req, res) => {
     // TODO add filters
-    // TODO add pagination
-    const articles = await model.getArticles();
+    const pageParams = getPageParams(req);
+    const articles = await model.getArticles(pageParams);
     return res.json(articles);
   })
 );
@@ -38,7 +38,7 @@ router.post(
 
 router.get(
   "/:id",
-  param("id").custom(isResourceId).bail().customSanitizer(sanitizeResourceId),
+  sanitizeResourceId(),
   tryRequest(async (req, res) => {
     const article = await model.getArticle(req.params.id);
 
@@ -52,7 +52,7 @@ router.get(
 
 router.patch(
   "/:id",
-  param("id").custom(isResourceId).bail().customSanitizer(sanitizeResourceId),
+  sanitizeResourceId(),
   // TODO allow optional fields and that all authors exist in db
   sanitizeNewArticle(),
   tryRequest(async (req, res) => {
@@ -65,7 +65,7 @@ router.patch(
 
 router.delete(
   "/:id",
-  param("id").custom(isResourceId).bail().customSanitizer(sanitizeResourceId),
+  sanitizeResourceId(),
   tryRequest(async (req, res) => {
     const deleted = await model.deleteArticle(req.params.id);
     const status = deleted ? 204 : 404;

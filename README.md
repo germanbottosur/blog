@@ -32,14 +32,22 @@ By default, the development server will wait for connections on [http://localhos
 ### List authors
 
 ```
-GET /authors
+GET /authors?page=0&limit=10
 ```
+
+Query params:
+- `page`: Page number (zero-based). Defaults to `0`.
+- `limit`: Items per page. Defaults to `10`.
 
 ### List articles
 
 ```
-GET /articles
+GET /articles?page=0&limit=10
 ```
+
+Query params:
+- `page`: Page number (zero-based). Defaults to `0`.
+- `limit`: Items per page. Defaults to `10`.
 
 ### Create a new article
 

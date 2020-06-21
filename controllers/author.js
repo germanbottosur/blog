@@ -1,15 +1,20 @@
 const express = require("express");
-const { tryRequest } = require("../middlewares/request-validator");
+const {
+  sanitizePageParams,
+  getPageParams,
+  tryRequest,
+} = require("../middlewares/rest-sanitizer");
 const model = require("../models/author");
 
 const router = express.Router();
 
 router.get(
   "/",
+  sanitizePageParams(),
   tryRequest(async (req, res) => {
     // TODO add filters
-    // TODO add pagination
-    const authors = await model.getAuthors();
+    const pageParams = getPageParams(req);
+    const authors = await model.getAuthors(pageParams);
     return res.json(authors);
   })
 );

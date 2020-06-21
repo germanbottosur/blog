@@ -1,16 +1,25 @@
 const db = require("../db");
 
-const getArticles = async () => {
-  return db
-    .client()
-    .collection("articles")
-    .find({ deleted_at: null }, { title: 1, updated_at: 1 })
-    .map((doc) => ({
-      id: doc._id,
-      title: doc.title,
-      updated_at: doc.updated_at,
-    }))
-    .toArray();
+const getArticles = async (pageParams) => {
+  const pageLimits = db.parsePageLimits(pageParams);
+
+  return (
+    db
+      .client()
+      .collection("articles")
+      .find({ deleted_at: null })
+      .project({ title: 1, updated_at: 1 })
+      // TODO case insensitive index
+      .sort({ title: 1 })
+      .skip(pageLimits.skip)
+      .limit(pageLimits.limit)
+      .map((doc) => ({
+        id: doc._id,
+        title: doc.title,
+        updated_at: doc.updated_at,
+      }))
+      .toArray()
+  );
 };
 
 const getArticle = async (articleId) => {

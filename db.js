@@ -1,17 +1,16 @@
-const MongoClient = require("mongodb").MongoClient;
-const ObjectID = require("mongodb").ObjectID;
+const { MongoClient, ObjectID } = require("mongodb");
 
 const dbServerURI = process.env.DB_SERVER_URI || "mongodb://localhost:27017/";
 const poolSize = parseInt(process.env.DB_POOL_SIZE || "15");
+const connectionOptions = { useUnifiedTopology: true, poolSize: poolSize };
 const dbName = process.env.DB_NAME || "blog";
 
-const connectionOptions = { useNewUrlParser: true, poolSize: poolSize };
+const connectionsPool = new MongoClient(dbServerURI, connectionOptions);
 
-let connectionPool = null;
-
+// TODO validate and prevent possible race conditions while checking for isConnected
 const connect = async () => {
-  if (connectionPool === null) {
-    connectionPool = await MongoClient.connect(dbServerURI, connectionOptions);
+  if (!connectionsPool.isConnected()) {
+    await connectionsPool.connect();
     console.log("Database connected");
     return;
   } else {
@@ -20,17 +19,16 @@ const connect = async () => {
 };
 
 const client = () => {
-  if (connectionPool === null) {
-    throw new Error("Database is not connected");
+  if (connectionsPool.isConnected()) {
+    return connectionsPool.db(dbName);
   } else {
-    return connectionPool.db(dbName);
+    throw new Error("Database is not connected");
   }
 };
 
 const close = async () => {
-  if (connectionPool !== null) {
-    await connectionPool.close();
-    connectionPool = null;
+  if (connectionsPool.isConnected()) {
+    await connectionsPool.close();
   }
 
   console.log("Database disconnected");

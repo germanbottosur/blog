@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: "mongo:4.0.10-xenial"
+    image: "mongo:4.2.8-bionic"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=mydevelopmentsecret
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   web:
-    image: "node:10.16.0-stretch"
+    image: "node:14.4.0-stretch"
     depends_on:
       - db
     environment:

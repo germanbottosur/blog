@@ -36,6 +36,7 @@ GET /authors?page=0&limit=10
 ```
 
 Query params:
+
 - `page`: Page number (zero-based). Defaults to `0`.
 - `limit`: Items per page. Defaults to `10`.
 
@@ -46,6 +47,7 @@ GET /articles?page=0&limit=10
 ```
 
 Query params:
+
 - `page`: Page number (zero-based). Defaults to `0`.
 - `limit`: Items per page. Defaults to `10`.
 

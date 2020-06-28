@@ -4,8 +4,8 @@ Simple blog
 
 ## Requirements
 
-- docker 18.09.6
-- docker-compose 1.24.0
+- docker 18.09.6 or later
+- docker-compose 1.24.0 or later
 
 ## Installation
 
